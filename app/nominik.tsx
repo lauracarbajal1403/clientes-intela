@@ -187,7 +187,7 @@ Nota: Preguntas como estas o similares deben estar orientadas a respuestas que s
               <div className="absolute bottom-full right-0 mb-4 animate-[slideUp_0.3s_ease-out]">
                 <div className="bg-white rounded-2xl shadow-2xl px-6 py-4 whitespace-nowrap border border-gray-100">
                   <p className="text-gray-800 font-medium text-sm">
-                    Pregunta a <span className="text-[#4db8a8] font-semibold">Nominik</span>
+                    Chatea con <span className="text-[#4db8a8] font-semibold">Nominik</span>
                   </p>
                   <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-r border-b border-gray-100 transform rotate-45"></div>
                 </div>
