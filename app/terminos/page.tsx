@@ -53,6 +53,8 @@ const TerminosCondicionesNommy = () => {
           font-family: 'DM Sans', sans-serif;
           color: #000000;
           line-height: 1.7;
+          direction: ltr;
+          text-align: left;
         }
 
         html {
@@ -71,7 +73,7 @@ const TerminosCondicionesNommy = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[900px] mx-auto px-6 py-8">
+      <main className="max-w-[900px] mx-auto px-6 py-8" style={{marginLeft: 'auto', marginRight: 'auto'}}>
         {/* Condiciones Generales */}
         <Section id="generales" title="Condiciones Generales" ref={sectionRefs}>
           <p className="mb-4 text-black text-justify">
