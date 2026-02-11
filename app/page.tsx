@@ -454,14 +454,14 @@ export default function Home() {
           <div className="border-t border-[#4db8c4] pt-8">
             <div className="flex justify-between items-center">
               <a
-                href="https://drive.google.com/file/d/1cFTxtE8PW_hOgmomy2i56W1SArO7J-dV/view?usp=sharing"
+                href="/terminos"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-left font-bold space-x-3 group hover:text-[#1e3a5f] transition-colors duration-300"
               >Términos y condiciones</a>
               <a
                   className="hover:text-[#1e3a5f] transition-colors duration-300 text-sm mt-2 sm:mt-0"
-                  href="https://drive.google.com/file/d/1YaydY0xHt1kNv28WGSQoBp-I2-ZJ_CWk/view?usp=sharing"
+                  href="/aviso"
                   target="_blank"
                   rel="noopener noreferrer"
                   
