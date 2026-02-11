@@ -552,50 +552,10 @@ const ContactInfo = () => {
   );
 };
 
-// Cookie Resources Component
-const CookieResources = () => {
-  const browsers = [
-    { name: 'Apple Safari', url: 'https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac' },
-    { name: 'Google Chrome', url: 'https://support.google.com/chrome/answer/95647' },
-    { name: 'Microsoft Internet Explorer', url: 'https://support.microsoft.com/en-us/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d' },
-    { name: 'Mozilla Firefox', url: 'https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer' }
-  ];
 
-  const resources = [
-    { name: 'Google Analytics Opt-out', url: 'http://tools.google.com/dlpage/gaoptout' },
-    { name: 'Adobe Flash Player', url: 'https://www.adobe.com/support/flashplayer/' },
-    { name: 'Información sobre Cookies', url: 'https://www.allaboutcookies.org' }
-  ];
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h4 className="font-semibold text-black mb-3">Configuración de Cookies en Navegadores:</h4>
-        <ul className="space-y-2">
-          {browsers.map((browser, index) => (
-            <li key={index} className="ml-6 list-disc text-black">
-              <a href={browser.url} target="_blank" rel="noopener noreferrer" className="text-black underline">
-                {browser.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+  
 
-      <div>
-        <h4 className="font-semibold text-black mb-3">Recursos Adicionales:</h4>
-        <ul className="space-y-2">
-          {resources.map((resource, index) => (
-            <li key={index} className="ml-6 list-disc text-black">
-              <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-black underline">
-                {resource.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-};
+
 
 export default AvisoPrivacidadNommy;
