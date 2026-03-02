@@ -461,7 +461,7 @@ export default function Home() {
               >Términos y condiciones</a>
               <a
                   className="hover:text-[#1e3a5f] transition-colors duration-300 text-sm mt-2 sm:mt-0"
-                  href="/aviso"
+                  href="https://www.nommy.mx/aviso"
                   target="_blank"
                   rel="noopener noreferrer"
                   
