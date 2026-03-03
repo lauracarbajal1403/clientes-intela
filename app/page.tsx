@@ -44,7 +44,8 @@ export default function Home() {
     e.preventDefault()
     setIsLoading(true)
     setMessage("")
-
+    window.open('/gracias', '_blank')
+    
   try {
     const response = await fetch("/api/send-demo-request", {
       method: "POST",
@@ -58,7 +59,7 @@ export default function Home() {
 
     if (response.ok) {
       // Abrir página de agradecimiento en nueva pestaña
-      window.open('/gracias', '_blank')
+      
       
     } else {
       setMessage(data.error || "Hubo un error al agendar el demo. Por favor intenta de nuevo.")
