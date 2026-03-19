@@ -1,10 +1,7 @@
 import type React from "react"
 import { Geist, Geist_Mono } from "next/font/google"
- {/*
-import { Analytics } from "@vercel/analytics/next"
-*/}
-import { NominikChatbot } from "./nominik"
-
+import Navbar from "@/components/navigation"
+import Footer from "@/components/footer"
 import "./globals.css"
 import { GoogleTagManager } from "@next/third-parties/google";
 const _geist = Geist({ subsets: ["latin"] })
@@ -41,6 +38,7 @@ export default function RootLayout({
       
       </head>
       <body className={`font-sans antialiased`}>
+        <Navbar />
         {/* Google Analytics */}
         <GoogleTagManager gtmId="GTM-5DZBHBTF" />
         <GoogleAnalytics gaId="G-SD0Y7NY18T" />
@@ -50,6 +48,7 @@ export default function RootLayout({
         {/*
         <Analytics />
         */}
+        <Footer />
       </body>
     </html>
   )

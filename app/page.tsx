@@ -1,506 +1,491 @@
 "use client"
-
 import type React from "react"
-import { Phone, Linkedin, Facebook, Instagram } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useState } from "react"
-import type { FormEvent } from "react"
-import { X, Check } from "lucide-react"
-import NominikChatbot  from "@/app/nominik"
+import { useState, useEffect, type FormEvent } from "react"
+import { Input } from "@/components/ui/input"
+import Image from "next/image"
+import NominikChatbot from "@/app/nominik"
+import {
+  Clock, Shield, CheckCircle2,
+  ChevronRight, Send, Phone, Mail, MessageCircle,
+  BriefcaseBusiness, UserCheck, LayoutDashboard, FileText, Award
+} from 'lucide-react'
 
-  
-export default function Home() {
-  const [formData, setFormData] = useState({
-    nombre: "",
-    telefono: "",
-    empleados: "",
-    email: "",
-    empresa: "",
-    sitioweb: "",
-    mensaje: "",
-  })
+const LOGOS = [
+  { src: "/Simplytech.png",         alt: "Simplytech"    },
+  { src: "/Ricatto.png",            alt: "Ricatto"       },
+  { src: "/MXHEALTH.png",           alt: "MX Health"     },
+  { src: "/Logo-intela.png",        alt: "Intela"        },
+  { src: "/Novogas.png",            alt: "Novogas"       },
+  { src: "/Logo_Alertyx_white.png", alt: "Alertyx"       },
+  { src: "/Logo.png",               alt: "Logo"          },
+  { src: "/Bizhub.png",             alt: "Bizhub"        },
+  { src: "/Linkepro.png",           alt: "Linkepro"      },
+  { src: "/Factor.png",             alt: "Factor"        },
+  { src: "/BrisSandoval.png",       alt: "Bris Sandoval" },
+  { src: "/Abogados.png",           alt: "Abogados"      },
+]
+
+const comparison = [
+  { feature: "Tiempo de procesamiento", traditional: "2-3 días",            nommy: "5 minutos" },
+  { feature: "Riesgo de errores",        traditional: "Alto (manual)",       nommy: "Mínimo (automatizado)" },
+  { feature: "Cumplimiento IMSS",        traditional: "Complejo/Manual",     nommy: "Automático y Garantizado" },
+  { feature: "Acceso a la información",  traditional: "Archivos locales",    nommy: "Nube 24/7" },
+  { feature: "Costo operativo",          traditional: "Alto (horas hombre)", nommy: "Optimizado y Justo" },
+]
+
+const testimonials = [
+  {
+    stars: 5,
+    text: "Migrar de Intela a Nommy fue la mejor decisión. Automatizamos el 70% de las tareas manuales de nómina en solo dos semanas.",
+    name: "Laura Martínez",
+    role: "Directora de RRHH @ TechSolutions",
+    avatar: "/BrisSandoval.png",
+  },
+  {
+    stars: 5,
+    text: "La precisión en los cálculos y la facilidad para generar reportes nos ha ahorrado horas de auditoría interna.",
+    name: "Carlos Ruiz",
+    role: "CFO @ Grupo Industrial MX",
+    avatar: "/Ricatto.png",
+  },
+  {
+    stars: 5,
+    text: "El soporte técnico es excepcional. Realmente entienden las necesidades de las empresas mexicanas.",
+    name: "Sofía Vega",
+    role: "Gerente de Operaciones @ Innova Retail",
+    avatar: "/Factor.png",
+  },
+]
+
+const features = [
+  {
+    icon: <BriefcaseBusiness size={22} />,
+    title: 'Reclutamiento con IA',
+    desc: 'Encuentra al mejor talento en tiempo récord. Nuestra IA califica y filtra candidatos automáticamente.',
+  },
+  {
+    icon: <Clock size={22} />,
+    title: 'Control de Asistencia',
+    desc: 'Check-in inteligente con geolocalización y reconocimiento facial para una gestión precisa.',
+  },
+  {
+    icon: <LayoutDashboard size={22} />,
+    title: 'Expediente Digital',
+    desc: 'Toda la información de tus colaboradores en un solo lugar, segura y siempre disponible.',
+  },
+  {
+    icon: <Shield size={22} />,
+    title: 'Cumplimiento Legal',
+    desc: 'Actualizaciones automáticas ante cambios en leyes laborales y fiscales. Evita multas.',
+  },
+  {
+    icon: <UserCheck size={22} />,
+    title: 'Evaluación de Desempeño',
+    desc: 'Mide el crecimiento de tu equipo con KPIs claros y retroalimentación en tiempo real.',
+  },
+  {
+    icon: <FileText size={22} />,
+    title: 'Nómina Automatizada',
+    desc: 'Cálculos complejos resueltos en segundos. Dispersión masiva y timbrado inmediato.',
+  },
+]
+
+export default function HomePage() {
+  const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [formData, setFormData] = useState({ nombre: "", empresa: "", email: "", telefono: "", colaboradores: "1 - 20 empleados" })
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
-  const [showThanksModal, setShowThanksModal] = useState(false)
 
-  const scrollToDemo = () => {
-    const formSection = document.getElementById("demo-form")
-    if (formSection) {
-      formSection.scrollIntoView({ behavior: "smooth", block: "center" })
-    }
-  }
+  useEffect(() => {
+    setMounted(true)
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
-   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
+  if (!mounted) return null
+
+  const scrollToForm = () => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth", block: "center" })
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setMessage("")
     window.open('/gracias', '_blank')
-    
-  try {
-    const response = await fetch("/api/send-demo-request", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      // Abrir página de agradecimiento en nueva pestaña
-      
-      
-    } else {
-      setMessage(data.error || "Hubo un error al agendar el demo. Por favor intenta de nuevo.")
-    }
-    } catch (error) {
-      setMessage("Error al enviar la solicitud. Por favor intenta de nuevo.")
-    } finally {
-      setIsLoading(false)
-    }
+    try {
+      const response = await fetch("/api/send-demo-request", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      const data = await response.json()
+      if (response.ok) setFormData({ nombre: "", empresa: "", email: "", telefono: "", colaboradores: "1 - 20 empleados" })
+      else setMessage(data.error || "Hubo un error. Por favor intenta de nuevo.")
+    } catch { setMessage("Error al enviar. Por favor intenta de nuevo.") }
+    finally { setIsLoading(false) }
   }
-  
+
+  const orange = '#4db8a8'
+  const navy  = '#1d3461'
+  const purple = '#4db8a8'
+  const purpleLight = '#5ecfc0'
+  const purpleDark = '#2ea898'
+
   return (
-    <main className="min-h-screen">
-      {showThanksModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-8 relative shadow-2xl animate-in fade-in zoom-in duration-300">
-              <button
-                onClick={() => setShowThanksModal(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              
-              <div className="text-center">
-                <div className="w-20 h-20 bg-[#4FD1C5] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Check className="w-12 h-12 text-white" />
-                </div>
-                
-                <h3 className="text-3xl font-bold text-[#2C5F6F] mb-4">
-                  ¡Gracias por tu interés!
-                </h3>
-                
-                <p className="text-lg text-gray-600 mb-6">
-                  Hemos recibido tu solicitud de DEMO. Nuestro equipo se pondrá en contacto contigo muy pronto.
-                </p>
-                
-                <div className="bg-[#4FD1C5]/10 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-semibold text-[#2C5F6F]">Próximos pasos:</span>
-                    <br />
-                    Te contactaremos en menos de 24 horas para agendar tu demostración personalizada.
-                  </p>
-                </div>
-                
-                <Button
-                  onClick={() => setShowThanksModal(false)}
-                  className="w-full bg-[#4FD1C5] hover:bg-[#3DB9AD] text-white font-semibold py-6 rounded-full text-lg"
-                >
-                  Cerrar
-                </Button>
-              </div>
+    <div style={{ minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif", backgroundColor: '#ffffff' }}>
+
+      {/* ── HERO ── */}
+      <section style={{ background: 'linear-gradient(150deg, #f8f9ff 0%, #f0f2ff 60%, #f8f9ff 100%)', padding: isMobile ? '56px 20px 48px' : '80px 40px 80px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '48px' : '60px', alignItems: 'center' }}>
+
+          {/* Left */}
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#e0f7f3', border: '1px solid #9fe0d8', borderRadius: '999px', padding: '6px 14px', marginBottom: '28px' }}>
+              <Award size={13} color={purple} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: purple, letterSpacing: '0.05em' }}>BENEFICIO EXCLUSIVO PARA FAMILIA INTELA</span>
             </div>
-          </div>
-        )}
-      {/* Hero Section */}
-      <section
-        id="demo-form"
-        className="relative min-h-screen bg-gradient-to-r from-[#1a5f7a] via-[#2a8a9e] to-[#57c5d4] flex items-center px-6 py-20"
-      >
-        <div className="w-full grid lg:grid-cols-2 gap-12 items-center">
-          {/* Izquierda */}
-          <div className="space-y-8 lg:order-1 text-left">
-            <img src="/nommy.png" alt="Nommy Logo" className="w-32 h-32 object-contain opacity-90" />
-            <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight [text-shadow:_2px_2px_8px_rgba(0,0,0,0.4)]">
-              Para nuestra familia <span className="font-extrabold">Intela</span>
+
+            <h1 style={{ fontSize: isMobile ? '40px' : 'clamp(40px, 5vw, 58px)', fontWeight: 900, color: navy, lineHeight: 1.05, marginBottom: '20px' }}>
+              La evolución de tu<br />nómina{' '}
+              <span style={{ color: purple }}>comienza aquí.</span>
             </h1>
-            <p className="text-xl lg:text-2xl text-white/90 leading-relaxed">
-              Porque ser parte de Intela tiene sus ventajas.
+            <p style={{ fontSize: '17px', color: '#475569', lineHeight: 1.7, marginBottom: '32px', maxWidth: '480px' }}>
+              Simplifica tus procesos contables y laborales con la plataforma inteligente que ya confían los líderes de Intela. Menos errores, más tiempo para tu gente.
             </p>
-            <Button
-              size="lg"
-              onClick={scrollToDemo}
-              className="bg-[#4db8c4] hover:bg-[#3da5b0] text-white font-semibold text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-110"
-            >
-              ¡Quiero mi DEMO!
-            </Button>
-            <img src="intela.png" alt="Intela" />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '36px' }}>
+              {['Cálculos automáticos sin errores', 'Cumplimiento legal 100% garantizado', 'Implementación prioritaria para clientes Intela', 'Soporte especializado 24/7'].map((t, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CheckCircle2 size={18} color={orange} style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize: '15px', color: '#334155' }}>{t}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Derecha - Form */}
-          <div className="bg-[#ADD8E6] rounded-lg lg:order-1 shadow-xl overflow-hidden transition-transform duration-300 hover:scale-105">
-            <div className="bg-[#ADD8E6] text-gray-700 px-6 py-4">
-              <h3 className="text-2xl font-bold text-gray-700">Cuéntanos sobre tu empresa</h3>
-            </div>
+          {/* Right — Form card */}
+          <div style={{ backgroundColor: 'white', borderRadius: '20px', padding: isMobile ? '28px 20px' : '36px', boxShadow: '0 4px 40px rgba(0,0,0,0.10)', border: '1px solid #f1f5f9' }}>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, color: navy, marginBottom: '6px' }}>Agenda tu Demo</h3>
+            <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px' }}>Descubre cómo Nommy puede transformar tu operación en 15 minutos.</p>
 
-            <div className="p-6">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
-                      Nombre completo *
-                    </label>
-                    <input
-                      type="text"
-                      id="nombre"
-                      name="nombre"
-                      value={formData.nombre}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                      placeholder="Tu nombre"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Correo electrónico *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                      placeholder="tu@empresa.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="empresa" className="block text-sm font-medium text-gray-700 mb-2">
-                      Empresa *
-                    </label>
-                    <input
-                      type="text"
-                      id="empresa"
-                      name="empresa"
-                      value={formData.empresa}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                      placeholder="Nombre de tu empresa"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="empleados" className="block text-sm font-medium text-gray-700 mb-2">
-                      Número de empleados *
-                    </label>
-                    <select
-                      id="empleados"
-                      name="empleados"
-                      value={formData.empleados}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                    >
-                      <option value="">Selecciona una opción</option>
-                      <option value="1-10">1-10 empleados</option>
-                      <option value="11-50">11-50 empleados</option>
-                      <option value="51-100">51-100 empleados</option>
-                      <option value="101-500">101-500 empleados</option>
-                      <option value="500+">Más de 500 empleados</option>
-                    </select>
-                  </div>
-                </div>
-
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">
-                    Teléfono
-                  </label>
-                  <input
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
-                    value={formData.telefono}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                    placeholder="+52 55 1234 5678"
-                  />
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>NOMBRE</label>
+                  <Input placeholder="Tu nombre" value={formData.nombre} onChange={(e) => setFormData({ ...formData, nombre: e.target.value })} required />
                 </div>
-
                 <div>
-                  <label htmlFor="sitioWeb" className="block text-sm font-medium text-gray-700 mb-2">
-                    Sitio web
-                  </label>
-                  <input
-                    type="url"
-                    id="sitioweb"
-                    name="sitioweb"
-                    value={formData.sitioweb}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                    placeholder="https://tuempresa.com"
-                  />
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>EMPRESA</label>
+                  <Input placeholder="Nombre empresa" value={formData.empresa} onChange={(e) => setFormData({ ...formData, empresa: e.target.value })} required />
                 </div>
-
-                <div>
-                  <label htmlFor="mensaje" className="block text-sm font-medium text-gray-700 mb-2">
-                    Cuéntanos sobre tus necesidades
-                  </label>
-                  <textarea
-                    id="mensaje"
-                    name="mensaje"
-                    value={formData.mensaje}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent bg-white/50 backdrop-blur-lg"
-                    placeholder="Describe los desafíos actuales en tu gestión de nómina..."
-                  />
-                </div>
-
-                {message && (
-                  <div className={`p-4 rounded-lg ${message.includes('exitosamente') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {message}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="bg-[#4db8c4] hover:bg-[#274263] rounded-full text-white w-full text-lg py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="group-hover:animate-pulse">
-                    {isLoading ? 'Enviando...' : '¡Agenda tu DEMO!'}
-                  </span>
-                </button>
-
-                <p className="text-sm text-gray-600 text-center">
-                  * Campos obligatorios. Nos pondremos en contacto contigo en 24 horas.
-                </p>
-              </form>
-            </div>
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>EMAIL CORPORATIVO</label>
+                <Input type="email" placeholder="ejemplo@empresa.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>TELÉFONO / WHATSAPP</label>
+                <Input type="tel" placeholder="+52 (33) 0000 0000" value={formData.telefono} onChange={(e) => setFormData({ ...formData, telefono: e.target.value })} />
+              </div>
+              {message && <div style={{ padding: '10px 12px', borderRadius: '8px', backgroundColor: '#fee2e2', color: '#991b1b', fontSize: '13px' }}>{message}</div>}
+              <button type="submit" disabled={isLoading}
+                style={{ backgroundColor: purple, color: 'white', padding: '16px', borderRadius: '10px', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+                {isLoading ? "Enviando..." : <>Solicitar Acceso Prioritario <span style={{ fontSize: '18px' }}>→</span></>}
+              </button>
+              <p style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center', margin: 0 }}>
+                Al solicitar la demo, aceptas nuestros <u>Términos</u> y <u>Aviso de Privacidad</u>.
+              </p>
+            </form>
           </div>
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-white to-teal-300/15 py-20 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-[#1e3a5f]">
-              Beneficios <span className="text-[#4db8c4]">Nommy</span>
-            </h2>
-            <div className="flex items-start gap-4">
-              <span className="text-purple-400 text-2xl flex-shrink-0">🔍</span>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Reclutamiento impulsado por IA que encuentra al mejor talento en menos tiempo.
-              </p>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <span className="text-purple-400 text-2xl flex-shrink-0">⏱️</span>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Control de incidencias y horarios totalmente automatizado.
-              </p>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <span className="text-purple-400 text-2xl flex-shrink-0">📂</span>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Expediente digital del colaborador siempre actualizado.
-              </p>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <span className="text-purple-400 text-2xl flex-shrink-0">📍</span>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Check-in / Check-out inteligente para una gestión precisa de asistencia.
-              </p>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <span className="text-red-500 text-2xl flex-shrink-0">⭐</span>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                Califica a tus colaboradores y mejora sus procesos de desempeño.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-center lg:justify-end">
-            <img src="images/imagenn.png" alt="Nommy Benefits" className="w-full max-w-4xl h-auto object-contain" />
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-teal-300/10 py-20 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <img src="si.png" alt="Nommy Platform" />
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#1e3a5f] mb-12">
-              Conoce qué hace <span className="text-[#4db8c4]">Nommy</span>
-            </h2>
-
-            <div className="space-y-8">
-              <p className="text-2xl lg:text-3xl text-[#1e3a5f] leading-relaxed">
-                <span className="font-bold text-[#1e3a5f]">Nom</span>
-                <span className="font-bold text-[#4db8c4]">my</span> es una plataforma inteligente de automatización de
-                nómina desarrollada.
-              </p>
-
-              <p className="text-2xl lg:text-3xl text-[#1e3a5f] leading-relaxed">
-                Nuestro <span className="font-bold text-[#4db8c4]">objetivo</span> es ayudarte a simplificar los
-                procesos contables y laborales, <span className="font-bold text-[#4db8c4]">eliminando</span> tareas
-                manuales, <span className="font-bold text-[#4db8c4]">errores</span> de cálculo y{" "}
-                <span className="font-bold text-[#4db8c4]">duplicidad</span> de información.
-              </p>
-            </div>
+      {/* ── LOGOS CARRUSEL ── */}
+      <section style={{ padding: isMobile ? '32px 0' : '60px 0', backgroundColor: '#1d3461', overflow: 'hidden' }}>
+        <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', marginBottom: '28px', textAlign: 'center' }}>
+          EMPRESAS QUE YA TRANSFORMARON SU NÓMINA
+        </p>
+        <style>{`
+          @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .logo-track {
+            display: flex;
+            align-items: center;
+            width: max-content;
+            animation: marquee 28s linear infinite;
+          }
+          .logo-track:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
+        <div style={{ overflow: 'hidden', width: '100%' }}>
+          <div className="logo-track">
+            {[...LOGOS, ...LOGOS].map((logo, i) => (
+              <div key={i} style={{
+                width: isMobile ? '120px' : '160px',
+                height: isMobile ? '56px' : '72px',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: isMobile ? '40px' : '64px',
+              }}>
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    opacity: 0.35,
+                    filter: 'grayscale(1)',
+                    transition: 'opacity 0.2s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '0.35')}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-gray-50 py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-[#274263]">
-            Haz crecer tu operación con <span className="text-[#4db8c4]">más herramientas</span> que trabajan por ti
+      {/* ── FEATURES GRID ── */}
+      <section id="beneficios" style={{ padding: isMobile ? '60px 20px' : '88px 40px', backgroundColor: 'white' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, color: purple, letterSpacing: '0.12em', marginBottom: '12px' }}>FUNCIONALIDADES</p>
+          <h2 style={{ fontSize: isMobile ? '28px' : 'clamp(28px, 4vw, 42px)', fontWeight: 900, color: navy, marginBottom: '16px', lineHeight: 1.15 }}>
+            Todo lo que necesitas para gestionar tu capital humano
           </h2>
+          <p style={{ fontSize: '16px', color: '#64748b', maxWidth: '620px', margin: '0 auto 56px', lineHeight: 1.6 }}>
+            Nommy no es solo un software de nómina, es el ecosistema completo para potenciar el crecimiento de tu empresa.
+          </p>
 
-          <div className="space-y-8">
-            <div className="flex justify-start">
-              <div className="bg-[#4db8c4] text-white px-8 py-6 rounded-3xl rounded-bl-none max-w-2xl shadow-lg transition-transform duration-300 hover:scale-105">
-                <div className="flex flex-row items-center gap-4">
-                  <img src="/Reloj.png" alt="Reloj" className="w-12 h-12" />
-                  <p className="text-lg lg:text-xl leading-relaxed">
-                    Ahorra tiempo con cálculos automáticos y actualizaciones en línea
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <div className="bg-[#4db8c4] text-white px-8 py-6 rounded-3xl rounded-br-none max-w-2xl shadow-lg transition-transform duration-300 hover:scale-105">
-                <div className="flex flex-row items-center gap-4">
-                  <img src="/Tablero.png" alt="Tablero" className="w-12 h-12" />
-                  <p className="text-lg lg:text-xl leading-relaxed text-center">
-                    Controla desde incidencias, vacaciones y movimientos desde una sola vista
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-start">
-              <div className="bg-[#4db8c4] text-white px-8 py-6 rounded-3xl rounded-bl-none max-w-2xl shadow-lg transition-transform duration-300 hover:scale-105">
-                <div className="flex flex-row items-center gap-4">
-                  <img src="Vision360.png" alt="Vision 360" className="w-12 h-12" />
-                  <p className="text-lg lg:text-xl leading-relaxed">
-                    Obtén visibilidad total del historial y estatus de tus empleados
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-to-r from-[#17a2b8] to-[#1e3a5f] py-32 px-6 text-center">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-            Prueba Nommy
-            <br />y olvídate de la nómina.
-          </h2>
-
-          <Button
-            size="lg"
-            onClick={scrollToDemo}
-            className="bg-[#4db8c4] hover:bg-[#3da5b0] text-white font-semibold text-lg px-12 py-6 rounded-full shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-110"
-          >
-            ¡Quiero mi DEMO!
-          </Button>
-        </div>
-      </section>
-
-      <footer className="bg-white py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 items-center mb-8">
-            <div className="text-[#1e3a5f]">
-              <p className="font-semibold mb-2">Ventas</p>
-              <a
-                href="https://wa.me/523315179175"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-3 group hover:text-[#1e3a5f] transition-colors duration-300"
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px' }}>
+            {features.map((card, i) => (
+              <div key={i} style={{ backgroundColor: '#f8f9ff', borderRadius: '16px', padding: '32px 28px', textAlign: 'left', border: '1px solid #eef0ff', transition: 'box-shadow 0.2s', cursor: 'default' }}
+                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 8px 32px rgba(77,184,168,0.10)')}
+                onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
               >
-                <Phone className="w-5 h-5 text-[#1e3a5f] group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-[#1e3a5f] group-hover:text-[#1e3a5f]">(33) 15179175</span>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#e0f7f3', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', color: purple }}>
+                  {card.icon}
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: navy, marginBottom: '10px' }}>{card.title}</h3>
+                <p style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.65, margin: 0 }}>{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY MIGRATE / ALLIANCE ── */}
+      <section id="intela" style={{ padding: isMobile ? '60px 20px' : '88px 40px', background: `linear-gradient(135deg, ${purpleDark} 0%, ${purple} 60%, ${purpleLight} 100%)` }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '80px', alignItems: 'center' }}>
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '999px', padding: '6px 14px', marginBottom: '24px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'white', letterSpacing: '0.08em' }}>ALIANZA ESTRATÉGICA</span>
+            </div>
+            <h2 style={{ fontSize: isMobile ? '32px' : 'clamp(32px, 4vw, 46px)', fontWeight: 900, color: 'white', lineHeight: 1.1, marginBottom: '20px' }}>
+              ¿Por qué migrar de Intela a Nommy?
+            </h2>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, marginBottom: '36px' }}>
+              Como marca hermana de Intela, hemos diseñado un proceso de transición transparente y lleno de beneficios para que tu operación no se detenga.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {[
+                { title: 'Migración de Datos Gratuita', desc: 'Nos encargamos de pasar toda tu información histórica sin costo.' },
+                { title: 'Tarifa Preferencial', desc: 'Descuentos exclusivos permanentes por ser cliente Intela.' },
+                { title: 'Integración Nativa', desc: 'Nommy se conecta perfectamente con tus herramientas actuales de Intela.' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '2px' }}>
+                    <ChevronRight size={14} color="white" />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '15px', fontWeight: 700, color: 'white', margin: '0 0 4px' }}>{item.title}</p>
+                    <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <div style={{ borderRadius: '16px', overflow: 'hidden', aspectRatio: '4/3', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+              <Image src="/images/junta.png" alt="Migración Intela a Nommy" width={600} height={450}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
+            <div style={{ position: 'absolute', bottom: '-16px', right: isMobile ? '0' : '-16px', backgroundColor: 'white', borderRadius: '14px', padding: '16px 20px', boxShadow: '0 8px 32px rgba(0,0,0,0.18)', maxWidth: '220px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#64748b', letterSpacing: '0.08em' }}>ESTADO DE MIGRACIÓN</span>
+              </div>
+              <p style={{ fontSize: '14px', fontWeight: 700, color: navy, margin: 0, lineHeight: 1.4 }}>
+                98% de clientes Intela reportan satisfacción total tras el primer mes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section style={{ padding: isMobile ? '60px 20px' : '88px 40px', backgroundColor: 'white' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: isMobile ? '28px' : 'clamp(28px, 4vw, 40px)', fontWeight: 900, color: navy, marginBottom: '48px' }}>
+            Lo que dicen nuestros clientes
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '20px' }}>
+            {testimonials.map((t, i) => (
+              <div key={i} style={{ backgroundColor: 'white', border: '1px solid #f1f5f9', borderRadius: '16px', padding: '28px 24px', textAlign: 'left', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
+                  {[0,1,2,3,4].map(j => <span key={j} style={{ color: '#fbbf24', fontSize: '18px' }}>★</span>)}
+                </div>
+                <p style={{ fontSize: '14px', color: '#334155', lineHeight: 1.75, marginBottom: '24px', fontStyle: 'italic' }}>"{t.text}"</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, backgroundColor: '#f1f5f9' }}>
+                    <img src={t.avatar} alt={t.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '14px', fontWeight: 700, color: navy, margin: 0 }}>{t.name}</p>
+                    <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── COMPARACIÓN ── */}
+      <section style={{ padding: isMobile ? '60px 20px' : '88px 40px', backgroundColor: '#f8f9ff' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: isMobile ? '28px' : '38px', fontWeight: 900, color: navy, marginBottom: '12px' }}>
+            ¿Por qué cambiar a Nommy?
+          </h2>
+          <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '48px' }}>
+            Compara la eficiencia de nuestra plataforma contra los métodos tradicionales.
+          </p>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1.5fr', backgroundColor: '#f8f9ff', padding: '14px 24px', borderBottom: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: navy, textAlign: 'left' }}>Característica</span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#94a3b8', textAlign: 'center' }}>Método Tradicional</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: purple, textAlign: 'center' }}>Con Nommy</span>
+            </div>
+            {comparison.map((row, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1.5fr', padding: '16px 24px', borderBottom: i < comparison.length - 1 ? '1px solid #f1f5f9' : 'none', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', color: '#334155', textAlign: 'left' }}>{row.feature}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <span style={{ color: '#ef4444', fontSize: '13px' }}>✕</span>
+                  <span style={{ fontSize: '13px', color: '#94a3b8' }}>{row.traditional}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <span style={{ color: orange, fontSize: '13px' }}>✓</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: navy }}>{row.nommy}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ── */}
+      <section style={{ padding: isMobile ? '40px 20px' : '60px 40px', backgroundColor: 'white' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <div style={{ background: `linear-gradient(135deg, ${purpleDark} 0%, ${purple} 60%, ${purpleLight} 100%)`, borderRadius: '24px', padding: isMobile ? '48px 28px' : '64px 56px', textAlign: 'center' }}>
+            <h2 style={{ fontSize: isMobile ? '28px' : '38px', fontWeight: 900, color: 'white', lineHeight: 1.2, marginBottom: '16px' }}>
+              ¿Listo para llevar tu nómina al siguiente nivel?
+            </h2>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, marginBottom: '36px', maxWidth: '440px', margin: '0 auto 36px' }}>
+              Únete a las cientos de empresas que ya transformaron su gestión de capital humano con Nommy.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button onClick={scrollToForm} style={{ backgroundColor: 'white', color: purple, padding: '14px 28px', borderRadius: '999px', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer' }}>
+                Solicitar Demo Ahora
+              </button>
+              <a href='https://wa.me/523315179175' target="_blank" rel="noopener noreferrer" style={{ backgroundColor: 'transparent', color: 'white', padding: '14px 28px', borderRadius: '999px', fontWeight: 700, fontSize: '15px', border: '1.5px solid rgba(255,255,255,0.5)', cursor: 'pointer', textDecoration: 'none', display: 'inline-block' }}>
+                Hablar con un Experto
               </a>
             </div>
-
-            <div className="flex justify-center">
-              <div className="text-[#1e3a5f] text-10xl font-bold flex flex-col items-center gap-1">
-                <img src="Nommyy.png" alt="Nommy Logo" className="w-24 h-24" />
-              </div>
-            </div>
-
-            <div className="text-[#1e3a5f] text-right">
-              <p className="font-semibold mb-2 text-[#1e3a5f]">Email</p>
-              <p>ventas@nommy.mx</p>
-            </div>
-          </div>
-
-          <div className="border-t border-[#4db8c4] pt-8">
-            <div className="flex justify-between items-center">
-              <a
-                href="/terminos"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-left font-bold space-x-3 group hover:text-[#1e3a5f] transition-colors duration-300"
-              >Términos y condiciones</a>
-              <a
-                  className="hover:text-[#1e3a5f] transition-colors duration-300 text-sm mt-2 sm:mt-0"
-                  href="https://www.nommy.mx/aviso"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  
-                >Aviso de privacidad</a>
-
-              <div className="flex gap-4">
-                <a
-                  href="https://www.linkedin.com/in/nommy-m%C3%A9xico-a797a1376/?trk=public-profile-join-page"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-[#4db8c4] rounded-full flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all duration-300"
-                >
-                  <Linkedin className="w-5 h-5 text-white" />
-                </a>
-
-                <a
-                  href="https://www.facebook.com/profile.php?id=61578598203669"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-[#4db8c4] rounded-full flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all duration-300"
-                >
-                  <Facebook className="w-5 h-5 text-white" />
-                </a>
-
-                <a
-                  href="https://www.instagram.com/nommymexico/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-[#4db8c4] rounded-full flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all duration-300"
-                >
-                  <Instagram className="w-5 h-5 text-white" />
-                </a>
-              </div>
-            </div>
           </div>
         </div>
-      </footer>
+      </section>
+
+      {/* ── CONTACT FORM ── */}
+      <section id="contact-form" style={{ padding: isMobile ? '60px 20px' : '88px 40px', backgroundColor: '#1d3461' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '80px', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontSize: isMobile ? '32px' : 'clamp(32px, 4vw, 48px)', fontWeight: 900, color: 'white', lineHeight: 1.15, marginBottom: '20px' }}>
+              ¿Listo para automatizar tu nómina?
+            </h2>
+            <p style={{ fontSize: '16px', color: '#94a3b8', lineHeight: 1.7, marginBottom: '36px' }}>
+              Únete a las empresas que ya están ahorrando horas de trabajo administrativo cada mes.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {[
+                { icon: <Phone size={18} color={orange} />, label: 'Ventas', value: '(33) 1517 9175', href: 'https://wa.me/523315179175' },
+                { icon: <Mail size={18} color={orange} />, label: 'Email', value: 'ventas@nommy.mx', href: 'mailto:ventas@nommy.mx' },
+                { icon: <MessageCircle size={18} color={orange} />, label: 'WhatsApp', value: 'Chatea con nosotros', href: 'https://wa.me/523315179175' },
+              ].map((c, i) => (
+                <a key={i} href={c.href} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', backgroundColor: '#1d3461', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    {c.icon}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>{c.label}</p>
+                    <p style={{ fontSize: '15px', fontWeight: 700, color: 'white', margin: 0 }}>{c.value}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: isMobile ? '24px 20px' : '36px', boxShadow: '0 8px 40px rgba(0,0,0,0.25)' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: navy, marginBottom: '24px', textAlign: 'center' }}>
+              Solicita tu Demo Gratis
+            </h3>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>NOMBRE COMPLETO</label>
+                <Input placeholder="Ej. Juan Pérez" value={formData.nombre} onChange={(e) => setFormData({ ...formData, nombre: e.target.value })} required />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>EMAIL</label>
+                  <Input type="email" placeholder="juan@empresa.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>EMPRESA</label>
+                  <Input placeholder="Tu Empresa S.A." value={formData.empresa} onChange={(e) => setFormData({ ...formData, empresa: e.target.value })} required />
+                </div>
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>COLABORADORES</label>
+                <select value={formData.colaboradores} onChange={(e) => setFormData({ ...formData, colaboradores: e.target.value })} required
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', color: '#1d3461', backgroundColor: 'white', outline: 'none' }}>
+                  <option>1 - 20 empleados</option>
+                  <option>21 - 50 empleados</option>
+                  <option>51 - 100 empleados</option>
+                  <option>Más de 100</option>
+                </select>
+              </div>
+              {message && <div style={{ padding: '10px 12px', borderRadius: '8px', backgroundColor: '#fee2e2', color: '#991b1b', fontSize: '13px' }}>{message}</div>}
+              <button type="submit" disabled={isLoading}
+                style={{ backgroundColor: purple, color: 'white', padding: '14px', borderRadius: '10px', fontWeight: 800, fontSize: '15px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                {isLoading ? "Enviando..." : <><span>Solicitar Demo Ahora</span><Send size={15} /></>}
+              </button>
+              <p style={{ fontSize: '11px', color: '#9ca3af', textAlign: 'center', margin: 0 }}>
+                Al solicitar la demo, aceptas nuestros Términos y Condiciones y Aviso de Privacidad.
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+
       <NominikChatbot />
-    </main>
+    </div>
   )
 }
