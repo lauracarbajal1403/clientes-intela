@@ -201,7 +201,7 @@ export default function HomePage() {
       </section>
 
       {/* ── LOGOS CARRUSEL ── */}
-      <section style={{ padding: isMobile ? '32px 0' : '60px 0', backgroundColor: '#1d3461', overflow: 'hidden' }}>
+      <section style={{ padding: isMobile ? '32px 0' : '60px 0', backgroundColor: '#1b2436', overflow: 'hidden' }}>
         <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', letterSpacing: '0.12em', marginBottom: '28px', textAlign: 'center' }}>
           EMPRESAS QUE YA TRANSFORMARON SU NÓMINA
         </p>
