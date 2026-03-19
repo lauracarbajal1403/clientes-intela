@@ -316,7 +316,7 @@ export default function HomePage() {
 
           <div style={{ position: 'relative' }}>
             <div style={{ borderRadius: '16px', overflow: 'hidden', aspectRatio: '4/3', backgroundColor: 'rgba(255,255,255,0.1)' }}>
-              <Image src="/images/junta.png" alt="Migración Intela a Nommy" width={600} height={450}
+              <Image src="/intela.png" alt="Migración Intela a Nommy" width={600} height={450}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
             <div style={{ position: 'absolute', bottom: '-16px', right: isMobile ? '0' : '-16px', backgroundColor: 'white', borderRadius: '14px', padding: '16px 20px', boxShadow: '0 8px 32px rgba(0,0,0,0.18)', maxWidth: '220px' }}>
