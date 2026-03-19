@@ -361,7 +361,7 @@ export default function HomePage() {
       </section>
 
       {/* ── COMPARACIÓN ── */}
-      <section style={{ padding: isMobile ? '60px 20px' : '88px 40px', backgroundColor: '#f8f9ff' }}>
+      <section id ="funcionalidades" style={{ padding: isMobile ? '60px 20px' : '88px 40px', backgroundColor: '#f8f9ff' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ fontSize: isMobile ? '28px' : '38px', fontWeight: 900, color: navy, marginBottom: '12px' }}>
             ¿Por qué cambiar a Nommy?
